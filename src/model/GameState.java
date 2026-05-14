@@ -1,6 +1,5 @@
 package model;
 
-import model.Blind;
 import java.util.List;
 
 public class GameState {
@@ -14,9 +13,7 @@ public class GameState {
     private boolean gameWon;
     private boolean gameOver;
 
-    /**
-     * Initialise une nouvelle partie avec une liste de blinds
-     */
+// Init une nouvelle partie
     public GameState(List<Blind> blinds) {
         this.deck = new Deck();
         this.handLevels = new HandLevels();
@@ -33,10 +30,8 @@ public class GameState {
     private void setupNewBlind() {
         this.currentBlindScore = 0;
         this.handsRemaining = 4; 
-        this.deck.reset(); // On remélange tout pour un nouveau blind
+        this.deck.reset(); 
     }
-
-    // --- Logique de progression ---
 
     public void addScore(long points) {
         this.currentBlindScore += points;
@@ -68,8 +63,6 @@ public class GameState {
             this.gameOver = true;
         }
     }
-
-    // --- Getters ---
 
     public Blind getCurrentBlind() {
         return blinds.get(currentBlindIndex);

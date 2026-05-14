@@ -39,9 +39,7 @@ public class HandLevels {
         scores.put(HandType.STRAIGHT_FLUSH,  new LevelInfo(100, 8));  
     }
 
-    /**
-     * Applique les bonus d'une planète de manière permanente[cite: 105].
-     */
+//Applique le bonus d'une planète sur une combinaison
     public void upgrade(Planet planet) {
         HandType target = planet.target();
         LevelInfo info = scores.get(target);
