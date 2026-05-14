@@ -79,4 +79,17 @@ public final class Deck {
 			cards.set(j, tmp);
 		}
 	}
+	public void reset() {
+	    drawPile.clear();
+	    discardPile.clear();
+
+	    for (var color : Color.values()) {
+	        for (var rank : Rank.values()) {
+	            drawPile.add(new Card(rank, color));
+	        }
+	    }
+
+	    mix(drawPile);
+	}
+
 }
