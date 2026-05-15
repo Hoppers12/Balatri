@@ -96,9 +96,4 @@ public class GameState {
 	public boolean isGameOver() {
 		return gameOver;
 	}
-
-	public void addScore(int score) {
-		// TODO Auto-generated method stub
-
-	}
 }

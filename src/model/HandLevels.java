@@ -32,25 +32,25 @@ public class HandLevels {
 		}
 	}
 
-//Applique le bonus d'une planète sur une combinaison
+	//Applique le bonus d'une planète sur une combinaison
 	public void upgrade(Planet planet) {
 		Objects.requireNonNull(planet);
-		HandType target = planet.target();
-		LevelInfo info = scores.get(target);
+		var target = planet.target();
+		var info = scores.get(target);
 
 		scores.put(target, new LevelInfo(info.level() + 1, info.chips() + planet.bonusChips(),
 				info.multiplier() + planet.bonusMult()));
 	}
 
-	public long getChipsFor(HandType type) {
-		return scores.get(type).chips;
+	public int getChipsFor(HandType type) {
+		return scores.get(type).chips();
 	}
 
 	public int getMultiplierFor(HandType type) {
-		return scores.get(type).multiplier;
+		return scores.get(type).multiplier();
 	}
 
 	public int getLevelFor(HandType type) {
-		return scores.get(type).level;
+		return scores.get(type).level();
 	}
 }

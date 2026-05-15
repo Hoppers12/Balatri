@@ -19,7 +19,7 @@ public final class GameController {
 		this.view = view;
 	}
 
-	// Boucle principale (pour l'instant tant qu'on perd pas).
+	// Boucle principale.
 	public void run() {
 		while (!state.isGameOver()) {
 			playOneRound();
@@ -46,8 +46,9 @@ public final class GameController {
 		// Application du score (peut déclencher nextBlind en interne)
 		var blindBefore = state.getCurrentBlind();
 		state.addScore(score);
-		// le blind courant a-t-il changé après addScore ? Si oui, c'est qu'il a été battu
-		var blindWon = state.getCurrentBlind() != blindBefore;
+		// le blind courant a-t-il changé après addScore (ou est-ce qu'on a gagné la partie) ? 
+		// Si oui, c'est qu'il a été battu
+		var blindWon = state.getCurrentBlind() != blindBefore || state.isGameWon();
 
 		if (blindWon) {
 			// Planète aléatoire.

@@ -14,6 +14,6 @@ public final class ScoreController {
 	public static int getScore(HandType type, HandLevels levels) {
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(levels);
-		return (int) (levels.getChipsFor(type) * levels.getMultiplierFor(type));
+		return (levels.getChipsFor(type) * levels.getMultiplierFor(type));
 	}
 }
