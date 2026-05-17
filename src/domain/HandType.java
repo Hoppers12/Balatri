@@ -1,7 +1,8 @@
 package domain;
 
 public enum HandType {
-	// carte haute, paire, double paire, brelan, suite, couleur, full, carré, quinte flush
+	// carte haute, paire, double paire, brelan, suite, couleur, full, carré, quinte
+	// flush
 	HIGH_CARD(5, 1), PAIR(10, 2), TWO_PAIR(20, 2), THREE_OF_KIND(30, 3), STRAIGHT(30, 4), FLUSH(35, 4),
 	FULL_HOUSE(40, 4), FOUR_OF_A_KIND(60, 7), STRAIGHT_FLUSH(100, 8);
 

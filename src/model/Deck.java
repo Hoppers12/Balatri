@@ -49,8 +49,8 @@ public final class Deck {
 	public void discard(List<Card> cards) {
 		Objects.requireNonNull(cards);
 		for (var card : cards) {
-	        discardPile.add(card);
-	    }
+			discardPile.add(card);
+		}
 	}
 
 	public int restDrawPile() {
@@ -61,13 +61,13 @@ public final class Deck {
 	private void recycleDiscard() {
 		mix(discardPile);
 		// Transférer toutes les cartes de la défausse vers la pioche
-	    for (var card : discardPile) {
-	        drawPile.add(card);
-	    }
-	    // Vider la défausse
-	    while (!discardPile.isEmpty()) {
-	        discardPile.removeLast();
-	    }
+		for (var card : discardPile) {
+			drawPile.add(card);
+		}
+		// Vider la défausse
+		while (!discardPile.isEmpty()) {
+			discardPile.removeLast();
+		}
 	}
 
 	// Mélange de liste
@@ -79,17 +79,18 @@ public final class Deck {
 			cards.set(j, tmp);
 		}
 	}
+
 	public void reset() {
-	    drawPile.clear();
-	    discardPile.clear();
+		drawPile.clear();
+		discardPile.clear();
 
-	    for (var color : Color.values()) {
-	        for (var rank : Rank.values()) {
-	            drawPile.add(new Card(rank, color));
-	        }
-	    }
+		for (var color : Color.values()) {
+			for (var rank : Rank.values()) {
+				drawPile.add(new Card(rank, color));
+			}
+		}
 
-	    mix(drawPile);
+		mix(drawPile);
 	}
 
 }
