@@ -7,7 +7,7 @@ import domain.HandType;
 import domain.Planet;
 import model.GameState;
 
-public interface View {
+public sealed interface View permits ConsoleView, GraphicalView {
 
 	// Affiche l'état courant (blind, score cumulé, mains restantes, niveaux).
 	void showState(GameState state);
