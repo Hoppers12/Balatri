@@ -1,13 +1,13 @@
 import java.util.List;
-import domain.Card;
-import domain.Color;
-import domain.HandDetector;
-import domain.Rank;
+//import domain.Card;
+//import domain.Color;
+//import domain.HandDetector;
+//import domain.Rank;
 import model.Blind;
-import model.Deck;
+//import model.Deck;
 import model.GameState;
 import view.ConsoleView;
-import view.View;
+//import view.View;
 import controller.GameController;
 
 class Main {

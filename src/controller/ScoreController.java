@@ -7,7 +7,7 @@ import model.HandLevels;
 
 public final class ScoreController {
 
-	// classe utilitaire non instanciable
+	// Classe utilitaire => non instanciable
 	private ScoreController() {
 	}
 

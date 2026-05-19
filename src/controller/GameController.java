@@ -19,7 +19,7 @@ public final class GameController {
 		this.view = view;
 	}
 
-	// Boucle principale.
+	// Boucle principale
 	public void run() {
 		while (!state.isGameOver()) {
 			playOneRound();
@@ -27,7 +27,7 @@ public final class GameController {
 		view.showEnd(state);
 	}
 
-	// Tour complet : pioche, sélection, score, défausse.
+	// Tour complet : pioche, sélection, score, défausse
 	private void playOneRound() {
 		view.showState(state);
 
@@ -35,7 +35,7 @@ public final class GameController {
 		var cards = state.getDeck().draw(8);
 		view.showHand(cards);
 
-		// Le joueur sélectionne 5 cartes parmi les 8
+		// Selectionne 5 cartes parmi les 8
 		var selected = view.askSelection(cards);
 
 		// Détecte la combinaison et calcule le score
@@ -43,15 +43,14 @@ public final class GameController {
 		var score = ScoreController.getScore(type, state.getHandLevels());
 		view.showPlay(type, score);
 
-		// Application du score (peut déclencher nextBlind en interne)
+		// Gestion du score (peut déclencher nextBlind)
 		var blindBefore = state.getCurrentBlind();
 		state.addScore(score);
-		// le blind courant a-t-il changé après addScore (ou est-ce qu'on a gagné la partie) ? 
-		// Si oui, c'est qu'il a été battu
+		// Blind battu si le blind a changé OU si la partie a été gagnée (dernier blind)
 		var blindWon = state.getCurrentBlind() != blindBefore || state.isGameWon();
 
 		if (blindWon) {
-			// Planète aléatoire.
+			// Planète aléatoire
 			var planet = randomPlanet();
 			state.getHandLevels().upgrade(planet);
 			view.showPlanetWon(planet);
@@ -62,7 +61,7 @@ public final class GameController {
 		}
 	}
 
-	// Tirage planète.
+	// Tirage planète
 	private static Planet randomPlanet() {
 		var planets = Planet.values();
 		var index = (int) (Math.random() * planets.length);

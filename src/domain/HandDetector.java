@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
+//Classe utilitaire => non instaciable
 public final class HandDetector {
 
 	private static final int HAND_SIZE = 5;
 
-	// classe utilitaire => non instaciable
 	private HandDetector() {
 	}
 
@@ -25,13 +25,17 @@ public final class HandDetector {
 			return HandType.STRAIGHT_FLUSH;
 		}
 
-		// Détecter les combinaisons baséées sur le rang (paire, double paire, brelan,
-		// full, carré)
+		// Détecter les combinaisons à partir du rang (paire, double paire, brelan, full, carré)
 		var counts = countRanks(cards);
-		// Nombre max de cartes aux mêmes rang
-		var maxSameRank = counts.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+		// Nombre max de cartes de mêmes rang
+		var maxSameRank = counts.values().stream()
+														.mapToInt(Integer::intValue)
+														.max()
+														.orElse(0);
 		// Nombre de paire
-		var pairCount = counts.values().stream().filter(c -> c == 2).count();
+		var pairCount = counts.values().stream()
+													.filter(c -> c == 2)
+													.count();
 
 		if (maxSameRank == 4) {
 			return HandType.FOUR_OF_A_KIND;
@@ -57,25 +61,27 @@ public final class HandDetector {
 		return HandType.HIGH_CARD;
 	}
 
-	// == fonctionne car Color est une enum
-	// Ont-elles toutes les mêmes couleurs ?
+	// == fonctionne car Color est un enum
 	private static boolean isFlush(List<Card> cards) {
 		var first = cards.get(0).color();
-		return cards.stream().allMatch(c -> c.color() == first);
+		// Toutes la même couleur ?
+		return cards.stream()
+								.allMatch(c -> c.color() == first);
 	}
 
 	private static boolean isStraight(List<Card> cards) {
-		// Récupère les valeurs triées
-		var values = cards.stream().mapToInt(c -> c.rank().value()).sorted().toArray();
+		// Recupere les vals triées
+		var values = cards.stream()
+											.mapToInt(c -> c.rank().value())
+											.sorted()
+											.toArray();
 
-		// Cas particulier A-2-3-4-5 : l'as (14) est traité comme 1
+		// Cas A-2-3-4-5 : l'as (14) comme 1
 		if (Arrays.equals(values, new int[] { 2, 3, 4, 5, 14 })) {
 			return true;
 		}
 
-		// Suite normale : 5 valeurs consécutives
-		// Le cas 10-V-D-R-A est traité automatiquement (l'as vaut 14 cest donc
-		// consécutif après le roi)
+		// Cas 10-V-D-R-A est auto (l'as vaut 14 cest consécutif après le roi)
 		for (var i = 1; i < values.length; i++) {
 			if (values[i] != values[i - 1] + 1) {
 				return false;

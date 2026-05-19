@@ -2,7 +2,6 @@ package model;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 public class GameState {
 	private final Deck deck;
@@ -15,7 +14,7 @@ public class GameState {
 	private boolean gameWon;
 	private boolean gameOver;
 
-// Init une nouvelle partie
+	// Init une nouvelle partie
 	public GameState(List<Blind> blinds) {
 		Objects.requireNonNull(blinds);
 		if (blinds.isEmpty()) {
@@ -30,17 +29,15 @@ public class GameState {
 		setupNewBlind();
 	}
 
-	/**
-	 * Prépare les variables pour le blind courant.
-	 */
+	// Prépare les variables pour le blind courant.
 	private void setupNewBlind() {
-		this.currentBlindScore = 0;
-		this.handsRemaining = 4;
-		this.deck.reset();
+		currentBlindScore = 0;
+		handsRemaining = 4; // A augmenter aléatoirement ?
+		deck.reset();
 	}
 
 	public void addScore(long points) {
-		this.currentBlindScore += points;
+		currentBlindScore += points;
 		checkWinCondition();
 	}
 
@@ -49,7 +46,7 @@ public class GameState {
 		if (currentBlindScore >= current.targetScore()) {
 			nextBlind();
 		} else if (handsRemaining <= 0) {
-			this.gameOver = true;
+			gameOver = true;
 		}
 	}
 
@@ -58,15 +55,15 @@ public class GameState {
 			currentBlindIndex++;
 			setupNewBlind();
 		} else {
-			this.gameWon = true;
-			this.gameOver = true;
+			gameWon = true;
+			gameOver = true;
 		}
 	}
 
 	public void decrementHands() {
-		this.handsRemaining--;
+		handsRemaining--;
 		if (handsRemaining <= 0 && currentBlindScore < getCurrentBlind().targetScore()) {
-			this.gameOver = true;
+			gameOver = true;
 		}
 	}
 
@@ -97,28 +94,30 @@ public class GameState {
 	public boolean isGameOver() {
 		return gameOver;
 	}
+
 	@Override
 	public String toString() {
-	    StringJoiner sj = new StringJoiner("\n", "Etat actuel du jeu : \n", "\n");
+		var sb = new StringBuilder();
+		sb.append("Etat actuel du jeu : \n");
 
-	    sj.add("Blind actuelle     : " + (currentBlindIndex + 1) + " / " + blinds.size());
-	    sj.add("Score accumulé     : " + currentBlindScore + " pts");
-	    sj.add("Mains disponibles  : " + handsRemaining);
-	    sj.add("Statut victoire    : " + getVictoireStatut());
-	    sj.add("Statut partie      : " + (gameOver ? "Terminée" : "En cours"));
-	    sj.add("Blinds à affronter : " + blinds);
-	    
-	    return sj.toString();
+		sb.append("Blind actuelle     : ").append(currentBlindIndex + 1).append(" / ").append(blinds.size()).append("\n");
+		sb.append("Score accumulé     : ").append(currentBlindScore).append(" pts\n");
+		sb.append("Mains disponibles  : ").append(handsRemaining).append("\n");
+		sb.append("Statut victoire    : ").append(getVictoireStatut()).append("\n");
+		sb.append("Statut partie      : ").append(gameOver ? "Terminée" : "En cours").append("\n");
+		sb.append("Blinds à affronter : ").append(blinds).append("\n");
+
+		return sb.toString();
 	}
 
 	private String getVictoireStatut() {
-	    if (gameWon) {
-	        return "Gagné";
-	    } else if (gameOver) {
-	        return "Perdu";
-	    } else {
-	        return "En cours";
-	    }
+		if (gameWon) {
+			return "Gagné";
+		} else if (gameOver) {
+			return "Perdu";
+		} else {
+			return "En cours";
+		}
 	}
-	
+
 }

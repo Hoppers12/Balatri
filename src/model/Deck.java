@@ -13,7 +13,7 @@ public final class Deck {
 	private final List<Card> drawPile = new ArrayList<>(); // pioche
 	private final List<Card> discardPile = new ArrayList<>(); // défausse
 
-	// Crée les 52 cartes (13 rangs x 4 couleurs)
+	// Les 52 cartes (13 rangs x 4 couleurs)
 	public Deck() {
 		for (var color : Color.values()) {
 			for (var rank : Rank.values()) {
@@ -57,10 +57,10 @@ public final class Deck {
 		return drawPile.size();
 	}
 
-	// Mélange la défausse et la met dans la pioche
+	// Mélange la défausse et met dans la pioche
 	private void recycleDiscard() {
 		mix(discardPile);
-		// Transférer toutes les cartes de la défausse vers la pioche
+		// Mettre les cartes de la défausse dans la pioche
 		for (var card : discardPile) {
 			drawPile.add(card);
 		}
