@@ -2,6 +2,7 @@ package model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class GameState {
 	private final Deck deck;
@@ -96,4 +97,28 @@ public class GameState {
 	public boolean isGameOver() {
 		return gameOver;
 	}
+	@Override
+	public String toString() {
+	    StringJoiner sj = new StringJoiner("\n", "Etat actuel du jeu : \n", "\n");
+
+	    sj.add("Blind actuelle     : " + (currentBlindIndex + 1) + " / " + blinds.size());
+	    sj.add("Score accumulé     : " + currentBlindScore + " pts");
+	    sj.add("Mains disponibles  : " + handsRemaining);
+	    sj.add("Statut victoire    : " + getVictoireStatut());
+	    sj.add("Statut partie      : " + (gameOver ? "Terminée" : "En cours"));
+	    sj.add("Blinds à affronter : " + blinds);
+	    
+	    return sj.toString();
+	}
+
+	private String getVictoireStatut() {
+	    if (gameWon) {
+	        return "Gagné";
+	    } else if (gameOver) {
+	        return "Perdu";
+	    } else {
+	        return "En cours";
+	    }
+	}
+	
 }
