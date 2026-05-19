@@ -79,7 +79,14 @@ public final class ConsoleView implements View {
 	@Override
 	public void showEnd(GameState state) {
 	   Objects.requireNonNull(state);
-		IO.println(state);
+	    IO.println(state);
+	   if(state.isGameWon()) {
+       IO.println("Tu as gagné la partie en réussissant à battre les blinds !");
+
+	   }else {
+       IO.println("Tu as perdu la partie toutes tes mains ont été consommées");
+	   }
+
 		
 	}
 	
