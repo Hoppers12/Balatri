@@ -3,7 +3,6 @@ package view;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 import domain.Card;
 import domain.HandType;
@@ -22,27 +21,31 @@ public final class ConsoleView implements View {
 	@Override
 	public void showHand(List<Card> handCards) {
 		Objects.requireNonNull(handCards);
+		var sorted = View.sortByRank(handCards);
 		int i = 0;
-		for (Card carte : handCards) {
+		for (Card carte : sorted) {
 			IO.println("Carte " + i + " :" + carte);
 			i++;
 		}
-
 	}
 
 	@Override
 	public List<Card> askSelection(List<Card> handCards) {
 		Objects.requireNonNull(handCards);
+		var sorted = View.sortByRank(handCards);
 		var choosen = new ArrayList<Card>();
 		var alreadyChoosen = new ArrayList<Integer>();
-		var scanner = new Scanner(System.in);
 
 		IO.println("\n Choissiez 5 cartes parmis les 8 en donnant les indices un par un et en appuyant sur entrée \n");
 		var i = 0;
 		while (i < 5) {
-			IO.print("Entrez l'index de la carte n°" + (i + 1) + " : ");
-			var index = scanner.nextInt();
-			if (index < 0 || index >= handCards.size()) {
+			var line = IO.readln("Entrez l'index de la carte n°" + (i + 1) + " : ");
+      if (!line.matches("\\s*\\d+\\s*")) {
+      	IO.println("Entrée invalide ! Tapez un nombre entier.");
+      	continue;
+      }
+      var index = Integer.parseInt(line.trim());
+			if (index < 0 || index >= sorted.size()) {
 				IO.println("Index invalide ! Choisissez entre 0 et 7.");
 			}
 			// Vérifier si l'indice a déjà été choisi
@@ -50,7 +53,7 @@ public final class ConsoleView implements View {
 				IO.println("Cette carte a déjà été sélectionnée !");
 			} else {
 				alreadyChoosen.add(index);
-				choosen.add(handCards.get(index));
+				choosen.add(sorted.get(index));
 				i++;
 			}
 		}

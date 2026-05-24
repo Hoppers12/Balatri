@@ -1,9 +1,9 @@
 package domain;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 //Classe utilitaire => non instaciable
 public final class HandDetector {
@@ -29,7 +29,7 @@ public final class HandDetector {
 		var counts = countRanks(cards);
 		// Nombre max de cartes de mêmes rang
 		var maxSameRank = counts.values().stream()
-														.mapToInt(Integer::intValue)
+														.mapToLong(Long::longValue)
 														.max()
 														.orElse(0);
 		// Nombre de paire
@@ -90,11 +90,8 @@ public final class HandDetector {
 		return true;
 	}
 
-	private static Map<Rank, Integer> countRanks(List<Card> cards) {
-		var counts = new HashMap<Rank, Integer>();
-		for (var c : cards) {
-			counts.put(c.rank(), counts.getOrDefault(c.rank(), 0) + 1);
-		}
-		return counts;
+	private static Map<Rank, Long> countRanks(List<Card> cards) {
+		return cards.stream()
+        				.collect(Collectors.groupingBy(Card::rank, Collectors.counting()));
 	}
 }
