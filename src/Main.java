@@ -12,7 +12,7 @@ import controller.GameController;
 
 class Main {
 	static void main() {
-		List < Blind > blinds = List.of(new Blind("Petite Blind", 10), new Blind("Grosse Blind", 20), new Blind("Boss Blind", 30));
+		List < Blind > blinds = List.of(new Blind("Petite Blind", 150), new Blind("Grosse Blind", 300), new Blind("Boss Blind", 800));
 		GameState state = new GameState(blinds);
 		ConsoleView view = new ConsoleView();
 		GameController controller = new GameController(state, view);

@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Collections;
 
 import domain.Card;
 import domain.Color;
@@ -20,7 +21,7 @@ public final class Deck {
 				drawPile.add(new Card(rank, color));
 			}
 		}
-		mix(drawPile);
+		Collections.shuffle(drawPile);
 	}
 
 	public List<Card> draw(int n) {
@@ -59,7 +60,7 @@ public final class Deck {
 
 	// Mélange la défausse et met dans la pioche
 	private void recycleDiscard() {
-		mix(discardPile);
+		Collections.shuffle(discardPile);
 		// Mettre les cartes de la défausse dans la pioche
 		for (var card : discardPile) {
 			drawPile.add(card);
@@ -67,16 +68,6 @@ public final class Deck {
 		// Vider la défausse
 		while (!discardPile.isEmpty()) {
 			discardPile.removeLast();
-		}
-	}
-
-	// Mélange de liste
-	private static void mix(List<Card> cards) {
-		for (var i = cards.size() - 1; i > 0; i--) {
-			var j = (int) (Math.random() * (i + 1));
-			var tmp = cards.get(i);
-			cards.set(i, cards.get(j));
-			cards.set(j, tmp);
 		}
 	}
 
@@ -90,7 +81,7 @@ public final class Deck {
 			}
 		}
 
-		mix(drawPile);
+		Collections.shuffle(drawPile);
 	}
 
 }

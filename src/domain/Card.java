@@ -10,6 +10,6 @@ public record Card(Rank rank, Color color) {
 
 	@Override
 	public String toString() {
-		return rank + " of " + color;
+		return " " + rank.symbol() + " " + color.symbol();
 	}
 }
