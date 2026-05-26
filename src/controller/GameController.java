@@ -5,6 +5,7 @@ import java.util.Objects;
 import domain.HandDetector;
 import domain.Planet;
 import model.GameState;
+import model.Hand;
 import view.View;
 
 public final class GameController {
@@ -31,11 +32,11 @@ public final class GameController {
 	private void playOneRound() {
 		view.showState(state);
 
-		// Pioche 8 cartes
-		var cards = state.getDeck().draw(8);
+		// Pioche les cartes du tour (8 par défaut, cf. Hand.CARDS_DRAWN)
+		var cards = state.getDeck().draw(Hand.CARDS_DRAWN);
 		view.showHand(cards);
 
-		// Selectionne 5 cartes parmi les 8
+		// Sélectionne CARDS_PLAYED cartes parmi celles piochées (5 par défaut)
 		var selected = view.askSelection(cards);
 
 		// Détecte la combinaison et calcule le score

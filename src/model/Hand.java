@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// Représente les cartes détenues par le joueur durant un tour de jeu.
 public class Hand {
+	// Règles du jeu
+	public static final int CARDS_DRAWN = 8;
+	public static final int CARDS_PLAYED = 5;
+
 	private final List<Card> cardsInHand;
 	private final List<Card> selectedCards;
-	private static final int MAX_SELECTION = 5;
 
 
 	// Crée une nouvelle main avec les cartes piochées.
@@ -20,7 +22,7 @@ public class Hand {
 
 	// Sélectionne une carte de la main pour la placer dans la combinaison à jouer.
 	public boolean selectCard(Card card) {
-		if (selectedCards.size() < MAX_SELECTION && cardsInHand.contains(card) && !selectedCards.contains(card)) {
+		if (selectedCards.size() < CARDS_PLAYED && cardsInHand.contains(card) && !selectedCards.contains(card)) {
 			return selectedCards.add(card);
 		}
 		return false;
@@ -33,7 +35,7 @@ public class Hand {
 
 	// Vérifie si la sélection est prête à être jouée (5 cartes).
 	public boolean isSelectionValid() {
-		return selectedCards.size() == MAX_SELECTION;
+		return selectedCards.size() == CARDS_PLAYED;
 	}
 
 	// Une vue non modifiable des 8 cartes en main pour l'affichage.

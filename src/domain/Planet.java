@@ -32,4 +32,29 @@ public enum Planet {
 	public int bonusMult() {
 		return bonusMult;
 	}
+
+	// Nom lisible affiché à l'utilisateur (en français)
+	public String displayName() {
+		return switch (this) {
+			case PLUTO -> "Pluton";
+			case MERCURY -> "Mercure";
+			case URANUS -> "Uranus";
+			case VENUS -> "Vénus";
+			case SATURN -> "Saturne";
+			case JUPITER -> "Jupiter";
+			case EARTH -> "Terre";
+			case MARS -> "Mars";
+			case NEPTUNE -> "Neptune";
+		};
+	}
+
+	// Renvoie la planète qui cible la combinaison donnée (relation 1-1).
+	public static Planet forHandType(HandType type) {
+		for (var planet : values()) {
+			if (planet.target() == type) {
+				return planet;
+			}
+		}
+		throw new IllegalArgumentException("Aucune planète associée à " + type);
+	}
 }
