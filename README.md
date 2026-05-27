@@ -27,29 +27,37 @@ Dans Eclipse :
 
 1. Ouvrir `src/Main.java`.
 2. Clic sur l'icone start (verte) `Run Main`.
-3. Le jeu démarre dans la console Eclipse.
+3. Au démarrage, choisir la vue dans la console Eclipse :
+   - taper `c` puis `Entrée` pour la **vue console** ;
+   - taper `g` (ou n'importe quoi d'autre) puis `Entrée` pour la **vue graphique**.
 
-Le joueur affronte 3 blinds à la suite avec 4 mains par blind pour l'instant. Pour chaque main, les 8 cartes piochées sont affichées et on demande au joueur de saisir les indices des 5 cartes à jouer (un par un).
+Le joueur affronte 3 blinds à la suite avec 4 mains par blind. À chaque tour, 8 cartes sont piochées et le joueur en sélectionne 5 pour former une combinaison de poker.
 
-## État actuel de l'implémentation (phase 1)
+**Vue console** : on tape un par un les indices des 5 cartes à jouer.
+
+**Vue graphique** (Zen6) : on clique sur les cartes pour les sélectionner (elles passent en doré), puis on appuie sur `ESPACE` pour valider la main. Le résultat (combinaison + score) s'affiche dans un overlay ; appuyer sur `ESPACE` pour passer au tour suivant. Idem pour l'annonce d'une planète gagnée après un blind battu.
+
+## État actuel de l'implémentation
 
 ### Fonctionnalités complètes
 
 - **Cartes et combinaisons** : enums `Rank` (TWO, ..., ACE) et `Color` (CLUBS, DIAMONDS, HEARTS, SPADES), record `Card`.
-- **Détection des 9 combinaisons de Balatri** avec `HandDetector`, avec gestion des cas particulier A-2-3-4-5.
+- **Détection des 9 combinaisons de Balatri** avec `HandDetector`, avec gestion du cas particulier A-2-3-4-5.
 - **Pioche et défausse** : classe `Deck` avec mélange (Fisher–Yates shuffle Algorithm : https://www.geeksforgeeks.org/dsa/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/), recyclage automatique de la défausse quand la pioche est insuffisante.
 - **État du jeu** : `GameState` gère le blind courant, le score cumulé, les mains restantes, le statut de la partie (gagné / perdu).
 - **Blinds** : record `Blind` (nom + score cible).
 - **Calcul du score** : `chips × multiplicateur`, dans `ScoreController`.
-- **Planètes** : enum `Planet` (9 planètes, une par combinaison). Une planète aléatoire est donné à chaque blind battu et augmente de manière permanente les chips et le multiplicateur de la combinaison ciblée.
+- **Planètes** : enum `Planet` (9 planètes, une par combinaison). Une planète aléatoire est attribuée à chaque blind battu et augmente de manière permanente les chips et le multiplicateur de la combinaison ciblée.
 - **Niveaux courants** : `HandLevels` stocke les chips et multiplicateurs actuels par combinaison.
+- **Règles centralisées** : constantes `Hand.CARDS_DRAWN` (8), `Hand.CARDS_PLAYED` (5), `GameState.HANDS_PER_BLIND` (4) référencées par la vue et le contrôleur (pas de magic numbers).
 - **Vue console** (`ConsoleView`) : affichage de l'état du jeu, sélection des cartes par saisie d'indices, affichage du résultat de chaque main et des planètes obtenues.
-- **Boucle de jeu** : `GameController` gère les tours en dépendant uniquement de l'interface `View` (comme prévu par le modèle MVC).
+- **Vue graphique** (`GraphicalView`) avec **Zen6** : rendu des cartes (rang, symbole en haut-gauche et bas-droit, gros symbole central), sélection cliquable avec retour visuel doré, overlays centrés pour les résultats de main, les planètes gagnées et l'écran de fin de partie. Tri des cartes par rang croissant comme en console.
+- **Boucle de jeu** : `GameController` gère les tours en dépendant uniquement de l'interface `View` (modèle MVC strict). Choix de la vue (console ou graphique) au lancement.
 
-### Fonctionnalités en cours
+### À faire pour la phase 2
 
-- **Vue graphique** (`GraphicalView`) avec la bibliothèque **Zen6** : le squelette de la classe et affichage de l'état du jeu (`showState`) implémenté. L'affichage des cartes et la sélection par click sont en cours de développement et seront finalisés pour la phase 2.
-- **Améliorations** à choisir et implémenter pour la phase 2.
+- Au moins deux extensions parmi : score par carte, discards actifs, jokers, monnaie + boutique, blinds à contraintes, deck personnalisable, sauvegarde, mode infini + high scores.
+- Polish supplémentaire de l'interface graphique.
 
 ### Architecture
 
@@ -75,9 +83,11 @@ src/
 |      |-- GameController.java
 |       -- ScoreController.java
  -- view/                           (affichage et interaction)
-       |-- View.java                (interface)
+       |-- View.java                (interface scellée)
        |-- ConsoleView.java
-        -- GraphicalView.java       (en cours)
+       |-- GraphicalView.java
+       |-- Palette.java             (couleurs du thème)
+        -- Typography.java          (polices, dont Limelight pour le titre)
 ```
 
 Le `GameController` dépend uniquement de l'interface `View`, ce qui permet d'utiliser plusieurs vues différentes (console, graphique) sans modifier la logique du jeu.

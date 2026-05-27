@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameState {
+	// Règle de jeu : nombre de mains accordées au joueur pour battre chaque blind
+	public static final int HANDS_PER_BLIND = 4;
+
 	private final Deck deck;
 	private final HandLevels handLevels;
 	private final List<Blind> blinds;
@@ -32,7 +35,7 @@ public class GameState {
 	// Prépare les variables pour le blind courant.
 	private void setupNewBlind() {
 		currentBlindScore = 0;
-		handsRemaining = 4; // A augmenter aléatoirement ?
+		handsRemaining = HANDS_PER_BLIND;
 		deck.reset();
 	}
 

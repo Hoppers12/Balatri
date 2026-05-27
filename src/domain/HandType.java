@@ -27,4 +27,19 @@ public enum HandType {
 	public int baseMult() {
 		return baseMult;
 	}
+
+	// Nom lisible affiché à l'utilisateur (sans underscores ni majuscules SCREAMING)
+	public String displayName() {
+		return switch (this) {
+			case HIGH_CARD -> "Carte Haute";
+			case PAIR -> "Paire";
+			case TWO_PAIR -> "Double Paire";
+			case THREE_OF_KIND -> "Brelan";
+			case STRAIGHT -> "Suite";
+			case FLUSH -> "Couleur";
+			case FULL_HOUSE -> "Full";
+			case FOUR_OF_A_KIND -> "Carré";
+			case STRAIGHT_FLUSH -> "Quinte Flush";
+		};
+	}
 }
