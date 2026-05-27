@@ -7,6 +7,7 @@ import java.util.Objects;
 import domain.Card;
 import domain.HandType;
 import domain.Planet;
+import domain.SelectionResult;
 import model.GameState;
 
 public final class ConsoleView implements View {
@@ -30,23 +31,33 @@ public final class ConsoleView implements View {
 	}
 
 	@Override
-	public List<Card> askSelection(List<Card> handCards) {
+	public SelectionResult askSelection(List<Card> handCards) {
 		Objects.requireNonNull(handCards);
 		var sorted = View.sortByRank(handCards);
 		var choosen = new ArrayList<Card>();
 		var alreadyChoosen = new ArrayList<Integer>();
 
 		IO.println("\n Choissiez 5 cartes parmis les 8 en donnant les indices un par un et en appuyant sur entrée \n");
+		IO.println("Si vous souhaitez simplement discard les cartes sélectionnées, tapez 'D' à tout moment \n");
+    
 		var i = 0;
 		while (i < 5) {
 			var line = IO.readln("Entrez l'index de la carte n°" + (i + 1) + " : ");
-      if (!line.matches("\\s*\\d+\\s*")) {
-      	IO.println("Entrée invalide ! Tapez un nombre entier.");
+      if(line.equals("D") && choosen.size()>1) {
+        IO.print("\n Vous avez choisis de discard les cartes sélectionnées et de repiocher \n");
+        IO.print("Cartes envoyés en défausses : \n "  + choosen.toString()) ;
+        return new SelectionResult(List.copyOf(choosen), true);
+      }else if(line.equals("D") && choosen.size()<1) {
+        IO.print("\n Vous n'avez sélectionnés aucune carte à défausser précédemment \n");
+      }
+      
+      if (!line.matches("\\s*[0-9D]+\\s*")) {
+      	IO.println("Entrée invalide ! Tapez un nombre entier ou D pour discard.");
       	continue;
       }
       var index = Integer.parseInt(line.trim());
 			if (index < 0 || index >= sorted.size()) {
-				IO.println("Index invalide ! Choisissez entre 0 et 7.");
+				IO.println("Index invalide ! Choisissez entre 0 et 7 ou D pour discard");
 			}
 			// Vérifier si l'indice a déjà été choisi
 			else if (alreadyChoosen.contains(index)) {
@@ -60,7 +71,7 @@ public final class ConsoleView implements View {
 
 		var choosenImmuable = List.copyOf(choosen);
 
-		return choosenImmuable;
+		return new SelectionResult(List.copyOf(choosen), false);
 	}
 
 	@Override

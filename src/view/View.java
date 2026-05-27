@@ -6,6 +6,7 @@ import java.util.Comparator;
 import domain.Card;
 import domain.HandType;
 import domain.Planet;
+import domain.SelectionResult;
 import model.GameState;
 
 public sealed interface View permits ConsoleView, GraphicalView {
@@ -24,7 +25,7 @@ public sealed interface View permits ConsoleView, GraphicalView {
 	void showHand(List<Card> handCards);
 
 	// Demande au joueur de sélectionner 5 cartes parmi les 8 passées.
-	List<Card> askSelection(List<Card> handCards);
+	SelectionResult askSelection(List<Card> handCards);
 
 	// Affiche le résultat d'une main jouée (combinaison + score gagné).
 	void showPlay(HandType type, int score);

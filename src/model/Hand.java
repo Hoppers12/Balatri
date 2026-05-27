@@ -27,6 +27,7 @@ public class Hand {
 		}
 		return false;
 	}
+	
 
 	// Retire une carte de la sélection actuelle.
 	public void deselectCard(Card card) {
@@ -59,5 +60,12 @@ public class Hand {
 	// Vide la sélection actuelle.
 	public void clearSelection() {
 		selectedCards.clear();
+	}
+	
+	//Extension discard retourne les cartes à envoyer à la défausse
+	public List<Card> discardCard() {
+	   List<Card> cardsToDiscard = new ArrayList<>(cardsInHand);
+	   cardsToDiscard.removeAll(selectedCards) ;
+	   return cardsToDiscard ;
 	}
 }
