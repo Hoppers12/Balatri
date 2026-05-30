@@ -17,6 +17,7 @@ import domain.Card;
 import domain.Color;
 import domain.HandType;
 import domain.Planet;
+import domain.SelectionResult;
 import model.GameState;
 import model.Hand;
 
@@ -27,7 +28,9 @@ public final class GraphicalView implements View {
 	private static final int CARD_HEIGHT = 160;
 	private static final int CARD_SPACING = 18;
 	private static final int CARDS_BOTTOM_MARGIN = 80;
-
+	private static final int BTN_WIDTH = 140;
+  private static final int BTN_HEIGHT = 45;
+  
 	private final ApplicationContext context;
 	private GameState currentState;
 	private List<Card> currentHand = List.of();
@@ -60,6 +63,33 @@ public final class GraphicalView implements View {
 
 		c.drawString(title, titleX, 60);
 	}
+	
+	private void drawDiscardButton(Graphics2D c) {
+	  
+    if (currentHand.isEmpty()) {
+      return; // Pas de cartes = pas de bouton
+    }
+    if (currentState != null && currentState.getDiscardsRemaining() <= 0) {
+      return;
+    }
+    
+    var screen = context.getScreenInfo();
+    // On le place en bas à droite
+    int btnX = screen.width() - BTN_WIDTH - 30; 
+    int btnY = screen.height() - BTN_HEIGHT - CARDS_BOTTOM_MARGIN - 20;
+
+    // Dessiner le fond du bouton
+    c.setColor(Palette.RED_SUIT); // Utilise du rouge pour bien le voir
+    c.fillRoundRect(btnX, btnY, BTN_WIDTH, BTN_HEIGHT, 15, 15);
+
+    // Dessiner le texte
+    c.setColor(Palette.BACKGROUND); // Texte clair
+    c.setFont(Typography.BODY);
+    var text = "Défausser";
+    var textWidth = c.getFontMetrics().stringWidth(text);
+    // Centrer le texte dans le bouton
+    c.drawString(text, btnX + (BTN_WIDTH - textWidth) / 2, btnY + 28);
+  }
 
 	private void drawStateInfo(Graphics2D c) {
 		if (currentState == null) {
@@ -372,6 +402,7 @@ public final class GraphicalView implements View {
 			drawActiveBonuses(c);
 			drawSelectionPrompt(c);
 			drawHand(c);
+			drawDiscardButton(c);
 			drawQuitHint(c);
 			// Les overlays passent par-dessus le reste
 			drawPlayOverlay(c);
@@ -397,51 +428,79 @@ public final class GraphicalView implements View {
 	}
 
 	@Override
-	public List<Card> askSelection(List<Card> handCards) {
-		Objects.requireNonNull(handCards);
-		this.currentHand = View.sortByRank(handCards);
-		// Sélection mutable pendant la saisie
-		var selected = new HashSet<Integer>();
-		this.selectedIndices = selected;
-		redraw();
+  public SelectionResult askSelection(List<Card> handCards) {
+    Objects.requireNonNull(handCards);
+    this.currentHand = View.sortByRank(handCards);
+    
+    var selected = new HashSet<Integer>();
+    this.selectedIndices = selected;
+    redraw();
 
-		// Boucle d'évènements : clic = choix, ESPACE = valider la main
-		while (true) {
-			var event = context.pollOrWaitEvent(Long.MAX_VALUE);
-			if (event == null) {
-				continue;
-			}
-			checkQuit(event);
-			var shouldExit = switch (event) {
-				case PointerEvent pe -> {
-					if (pe.action() == PointerEvent.Action.POINTER_DOWN) {
-						var idx = findCardIndex(pe.location().x(), pe.location().y());
-						if (idx >= 0) {
-							if (selected.contains(idx)) {
-								selected.remove(idx);
-							} else if (selected.size() < Hand.CARDS_PLAYED) {
-								selected.add(idx);
-							}
-							redraw();
-						}
-					}
-					yield false;
-				}
-				case KeyboardEvent ke -> ke.action() == KeyboardEvent.Action.KEY_PRESSED && ke.key() == KeyboardEvent.Key.SPACE && selected.size() == Hand.CARDS_PLAYED;
-			};
-			if (shouldExit) {
-				break;
-			}
-		}
+    // On mémorise si le joueur a cliqué sur défausser
+    boolean isDiscard = false;
+    while (true) {
+      var event = context.pollOrWaitEvent(Long.MAX_VALUE);
+      if (event == null) {
+        continue;
+      }
+      checkQuit(event);
+      
+      var shouldExit = switch (event) {
+        case PointerEvent pe -> {
+          if (pe.action() == PointerEvent.Action.POINTER_DOWN) {
+            var px = pe.location().x();
+            var py = pe.location().y();
 
-		// Liste résultat triée par ordre d'apparition dans la main (TreeSet trie auto)
-		var result = new ArrayList<Card>();
-		for (var idx : new TreeSet<>(selected)) {
-			result.add(currentHand.get(idx));
-		}
+            //  Clic sur une carte
+            var idx = findCardIndex(px, py);
+            if (idx >= 0) {
+              if (selected.contains(idx)) {
+                selected.remove(idx);
+              } else if (selected.size() < Hand.CARDS_PLAYED) {
+                selected.add(idx);
+              }
+              redraw();
+            }
+            
+            // Click sur le bouton défausser
+            var screen = context.getScreenInfo();
+            int btnX = screen.width() - BTN_WIDTH - 30;
+            int btnY = screen.height() - BTN_HEIGHT - CARDS_BOTTOM_MARGIN - 20;
+            
+            boolean canDiscard = currentState != null && currentState.getDiscardsRemaining() > 0;
+           
+            if (canDiscard && px >= btnX && px <= btnX + BTN_WIDTH && py >= btnY && py <= btnY + BTN_HEIGHT) {
+              if (!selected.isEmpty() && selected.size() <= Hand.CARDS_PLAYED) {
+                isDiscard = true;
+                yield true; 
+              }
+            }
+            if (px >= btnX && px <= btnX + BTN_WIDTH && py >= btnY && py <= btnY + BTN_HEIGHT) {
+              if (!selected.isEmpty() && selected.size() <= Hand.CARDS_PLAYED) {
+                isDiscard = true;
+                yield true; 
+              }
+            }
+          }
+          yield false;
+        }
+        //  Touche ESPACE (Jouer la main)
+        case KeyboardEvent ke -> ke.action() == KeyboardEvent.Action.KEY_PRESSED 
+            && ke.key() == KeyboardEvent.Key.SPACE 
+            && selected.size() == Hand.CARDS_PLAYED;
+      };
+      if (shouldExit) {
+        break;
+      }
+    }
 
-		return List.copyOf(result);
-	}
+    // Liste résultat triée par ordre d'apparition dans la main
+    var result = new ArrayList<Card>();
+    for (var idx : new TreeSet<>(selected)) {
+      result.add(currentHand.get(idx));
+    }
+    return new SelectionResult(List.copyOf(result), isDiscard);
+  }
 
 	@Override
 	public void showPlay(HandType type, int score) {

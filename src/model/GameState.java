@@ -16,6 +16,7 @@ public class GameState {
 	private int handsRemaining;
 	private boolean gameWon;
 	private boolean gameOver;
+	private int discardsRemaining;
 
 	// Init une nouvelle partie
 	public GameState(List<Blind> blinds) {
@@ -29,7 +30,9 @@ public class GameState {
 		this.currentBlindIndex = 0;
 		this.gameWon = false;
 		this.gameOver = false;
+		this.discardsRemaining = HANDS_PER_BLIND ;
 		setupNewBlind();
+		
 	}
 
 	// Prépare les variables pour le blind courant.
@@ -38,11 +41,21 @@ public class GameState {
 		handsRemaining = HANDS_PER_BLIND;
 		deck.reset();
 	}
+	public void substractDiscardsRemaining() {
+    this.discardsRemaining = this.discardsRemaining-1;
+  }
 
 	public void addScore(long points) {
 		currentBlindScore += points;
 		checkWinCondition();
 	}
+	
+	public int getDiscardsRemaining() {
+    return discardsRemaining;
+  }
+	public void resetDiscardRemaining() {
+    this.discardsRemaining = HANDS_PER_BLIND ;
+  }
 
 	private void checkWinCondition() {
 		var current = getCurrentBlind();
@@ -54,6 +67,7 @@ public class GameState {
 	}
 
 	private void nextBlind() {
+	  resetDiscardRemaining();
 		if (currentBlindIndex < blinds.size() - 1) {
 			currentBlindIndex++;
 			setupNewBlind();

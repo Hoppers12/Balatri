@@ -32,12 +32,12 @@ public final class GameController {
 	// Tour complet : pioche, sélection, score, défausse
 	private void playOneRound() {
 		view.showState(state);
-
 		// Pioche les cartes du tour (8 par défaut, cf. Hand.CARDS_DRAWN)
 		var cards = state.getDeck().draw(Hand.CARDS_DRAWN);
+		
 		boolean hasPlayed = false;
 
-    // 2. On boucle tant que le joueur décide de défausser (discard)
+    // On boucle tant que le joueur décide de défausser (discard)
     while (!hasPlayed) {
     		view.showHand(cards);
     
@@ -50,6 +50,7 @@ public final class GameController {
         state.getDeck().discard(selected);
         cards.removeAll(selected);
         int nbCartesAPiocher = selected.size();
+        state.substractDiscardsRemaining();
         if (nbCartesAPiocher > 0) {
             var newlyDrawnCards = state.getDeck().draw(nbCartesAPiocher);  
             //AJout des cartes nouvellement piochées pour remplacer

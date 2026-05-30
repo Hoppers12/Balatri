@@ -33,6 +33,7 @@ public final class ConsoleView implements View {
 	@Override
 	public SelectionResult askSelection(List<Card> handCards) {
 		Objects.requireNonNull(handCards);
+		
 		var sorted = View.sortByRank(handCards);
 		var choosen = new ArrayList<Card>();
 		var alreadyChoosen = new ArrayList<Integer>();
