@@ -27,6 +27,7 @@ public class Hand {
 		}
 		return false;
 	}
+	
 
 	// Retire une carte de la sélection actuelle.
 	public void deselectCard(Card card) {
