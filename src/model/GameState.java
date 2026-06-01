@@ -6,6 +6,7 @@ import java.util.Objects;
 public class GameState {
 	// Règle de jeu : nombre de mains accordées au joueur pour battre chaque blind
 	public static final int HANDS_PER_BLIND = 4;
+	private static final int DISCARDS_PER_BLIND = 3;
 
 	private final Deck deck;
 	private final HandLevels handLevels;
@@ -30,7 +31,6 @@ public class GameState {
 		this.currentBlindIndex = 0;
 		this.gameWon = false;
 		this.gameOver = false;
-		this.discardsRemaining = HANDS_PER_BLIND ;
 		setupNewBlind();
 		
 	}
@@ -39,6 +39,7 @@ public class GameState {
 	private void setupNewBlind() {
 		currentBlindScore = 0;
 		handsRemaining = HANDS_PER_BLIND;
+		discardsRemaining = DISCARDS_PER_BLIND;
 		deck.reset();
 	}
 	public void substractDiscardsRemaining() {
@@ -50,12 +51,15 @@ public class GameState {
 		checkWinCondition();
 	}
 	
+	public void useDiscard() {
+    if (discardsRemaining > 0) {
+        discardsRemaining--;
+    }
+	}
+
 	public int getDiscardsRemaining() {
     return discardsRemaining;
-  }
-	public void resetDiscardRemaining() {
-    this.discardsRemaining = HANDS_PER_BLIND ;
-  }
+	}
 
 	private void checkWinCondition() {
 		var current = getCurrentBlind();
@@ -67,7 +71,6 @@ public class GameState {
 	}
 
 	private void nextBlind() {
-	  resetDiscardRemaining();
 		if (currentBlindIndex < blinds.size() - 1) {
 			currentBlindIndex++;
 			setupNewBlind();
@@ -120,6 +123,7 @@ public class GameState {
 		sb.append("Blind actuelle     : ").append(currentBlindIndex + 1).append(" / ").append(blinds.size()).append("\n");
 		sb.append("Score accumulé     : ").append(currentBlindScore).append(" pts\n");
 		sb.append("Mains disponibles  : ").append(handsRemaining).append("\n");
+		sb.append("Défausses dispo   : ").append(discardsRemaining).append("\n");
 		sb.append("Statut victoire    : ").append(getVictoireStatut()).append("\n");
 		sb.append("Statut partie      : ").append(gameOver ? "Terminée" : "En cours").append("\n");
 		sb.append("Blinds à affronter : ").append(blinds).append("\n");

@@ -83,7 +83,7 @@ public final class GraphicalView implements View {
     c.fillRoundRect(btnX, btnY, BTN_WIDTH, BTN_HEIGHT, 15, 15);
 
     // Dessiner le texte
-    c.setColor(Palette.BACKGROUND); // Texte clair
+    c.setColor(Palette.TEXT); // Texte clair
     c.setFont(Typography.BODY);
     var text = "Défausser";
     var textWidth = c.getFontMetrics().stringWidth(text);
@@ -421,7 +421,7 @@ public final class GraphicalView implements View {
 	@Override
 	public void showHand(List<Card> handCards) {
 		Objects.requireNonNull(handCards);
-		this.currentHand = View.sortByRank(handCards);
+		this.currentHand = List.copyOf(handCards);
 		// Nouvelle main => sélection à zéro
 		this.selectedIndices = Set.of();
 		redraw();
@@ -430,7 +430,7 @@ public final class GraphicalView implements View {
 	@Override
   public SelectionResult askSelection(List<Card> handCards) {
     Objects.requireNonNull(handCards);
-    this.currentHand = View.sortByRank(handCards);
+    this.currentHand = List.copyOf(handCards);
     
     var selected = new HashSet<Integer>();
     this.selectedIndices = selected;
@@ -470,12 +470,6 @@ public final class GraphicalView implements View {
             boolean canDiscard = currentState != null && currentState.getDiscardsRemaining() > 0;
            
             if (canDiscard && px >= btnX && px <= btnX + BTN_WIDTH && py >= btnY && py <= btnY + BTN_HEIGHT) {
-              if (!selected.isEmpty() && selected.size() <= Hand.CARDS_PLAYED) {
-                isDiscard = true;
-                yield true; 
-              }
-            }
-            if (px >= btnX && px <= btnX + BTN_WIDTH && py >= btnY && py <= btnY + BTN_HEIGHT) {
               if (!selected.isEmpty() && selected.size() <= Hand.CARDS_PLAYED) {
                 isDiscard = true;
                 yield true; 

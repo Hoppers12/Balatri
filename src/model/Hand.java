@@ -61,11 +61,4 @@ public class Hand {
 	public void clearSelection() {
 		selectedCards.clear();
 	}
-	
-	//Extension discard retourne les cartes à envoyer à la défausse
-	public List<Card> discardCard() {
-	   List<Card> cardsToDiscard = new ArrayList<>(cardsInHand);
-	   cardsToDiscard.removeAll(selectedCards) ;
-	   return cardsToDiscard ;
-	}
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import domain.HandDetector;
@@ -33,7 +34,7 @@ public final class GameController {
 	private void playOneRound() {
 		view.showState(state);
 		// Pioche les cartes du tour (8 par défaut, cf. Hand.CARDS_DRAWN)
-		var cards = state.getDeck().draw(Hand.CARDS_DRAWN);
+		var cards = new ArrayList<>(View.sortByRank(state.getDeck().draw(Hand.CARDS_DRAWN)));
 		
 		boolean hasPlayed = false;
 
@@ -47,14 +48,22 @@ public final class GameController {
     		var selected = selectedObject.cards();
     		
     		if(selectedObject.isDiscardAction()) {
+    			if (state.getDiscardsRemaining() <= 0 || selected.isEmpty()) {
+            continue; // défausse refusée -> on re-demande
+        }
+        state.useDiscard();
+        
+        // On pioche AVANT de défausser (évite de repiocher les cartes jetées)
+        var replacements = state.getDeck().draw(selected.size());
         state.getDeck().discard(selected);
-        cards.removeAll(selected);
-        int nbCartesAPiocher = selected.size();
-        state.substractDiscardsRemaining();
-        if (nbCartesAPiocher > 0) {
-            var newlyDrawnCards = state.getDeck().draw(nbCartesAPiocher);  
-            //AJout des cartes nouvellement piochées pour remplacer
-            cards.addAll(newlyDrawnCards);
+
+        // Remplacement = les cartes défaussées changent
+        int r = 0;
+        for (var card : selected) {
+            int pos = cards.indexOf(card);
+            if (pos >= 0) {
+                cards.set(pos, replacements.get(r++));
+            }
         }
   		}else {
   		// Détecte la combinaison et calcule le score
