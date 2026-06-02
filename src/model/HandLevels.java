@@ -45,12 +45,12 @@ public class HandLevels {
 	}
 
 	public int getMultiplierFor(HandType type) {
-	   Objects.requireNonNull(type);
+	  Objects.requireNonNull(type);
 		return scores.get(type).multiplier();
 	}
 
 	public int getLevelFor(HandType type) {
-	   Objects.requireNonNull(type);
+	  Objects.requireNonNull(type);
 		return scores.get(type).level();
 	}
 	

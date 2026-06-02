@@ -19,6 +19,6 @@ public final class ScoreController {
 		Objects.requireNonNull(levels);
     Objects.requireNonNull(selected);
     
-		return (levels.getChipsFor(type) * levels.getMultiplierFor(type)+levels.getChipsForCards(selected));
+		return (levels.getChipsFor(type) * levels.getMultiplierFor(type) + levels.getChipsForCards(selected));
 	}
 }
