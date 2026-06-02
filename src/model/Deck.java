@@ -49,9 +49,8 @@ public final class Deck {
 
 	public void discard(List<Card> cards) {
 		Objects.requireNonNull(cards);
-		for (var card : cards) {
-			discardPile.add(card);
-		}
+
+		cards.forEach(carte->discardPile.add(carte));
 	}
 
 	public int restDrawPile() {
