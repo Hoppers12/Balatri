@@ -5,21 +5,21 @@ import java.util.Objects;
 
 import domain.HandDetector;
 import domain.Planet;
-import domain.SelectionResult;
 import model.GameState;
 import model.Hand;
+import model.HighScore;
 import view.View;
 
 public final class GameController {
 
 	private final GameState state;
 	private final View view;
+	private final HighScore highScore;
 
-	public GameController(GameState state, View view) {
-		Objects.requireNonNull(state);
-		Objects.requireNonNull(view);
-		this.state = state;
-		this.view = view;
+	public GameController(GameState state, View view, HighScore highScore) {
+    this.state = Objects.requireNonNull(state);
+    this.view = Objects.requireNonNull(view);
+    this.highScore = Objects.requireNonNull(highScore);
 	}
 
 	// Boucle principale
@@ -27,7 +27,8 @@ public final class GameController {
 		while (!state.isGameOver()) {
 			playOneRound();
 		}
-		view.showEnd(state);
+		boolean record = highScore.submit(state.getTotalScore(), state.getBlindsBeaten());
+    view.showEnd(state, highScore, record);
 	}
 
 	// Tour complet : pioche, sélection, score, défausse
@@ -75,7 +76,7 @@ public final class GameController {
   	    var blindBefore = state.getCurrentBlind();
   	    state.addScore(score);
   	    // Blind battu si le blind a changé OU si la partie a été gagnée (dernier blind)
-  	    var blindWon = state.getCurrentBlind() != blindBefore || state.isGameWon();
+  	    var blindWon = state.getCurrentBlind() != blindBefore;
   
   	    if (blindWon) {
   	      // Planète aléatoire

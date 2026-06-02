@@ -9,6 +9,7 @@ import domain.HandType;
 import domain.Planet;
 import domain.SelectionResult;
 import model.GameState;
+import model.HighScore;
 
 public final class ConsoleView implements View {
 
@@ -87,15 +88,22 @@ public final class ConsoleView implements View {
 	}
 
 	@Override
-	public void showEnd(GameState state) {
-		Objects.requireNonNull(state);
-		if (state.isGameWon()) {
-			IO.println("Tu as gagné la partie en réussissant à battre les blinds !");
+	public void showEnd(GameState state, HighScore highScore, boolean newRecord) {
+	    Objects.requireNonNull(state);
+	    IO.println("Partie terminée");
+	    IO.println("Score total    : " + state.getTotalScore() + " pts");
+	    IO.println("Blinds battus  : " + state.getBlindsBeaten());
+	    if (newRecord) {
+	        IO.println("Nouveau record de score !");
+	    }
+	    IO.println("Meilleur score : " + highScore.getBestScore()
+	            + " pts (" + highScore.getBestBlinds() + " blinds)");
+	}
 
-		} else {
-			IO.println("Tu as perdu la partie toutes tes mains ont été consommées");
-		}
-
+	@Override
+	public boolean askReplay() {
+	    var answer = IO.readln("Souhaitez-vous rejouer ? (o/n) : ");
+	    return answer.startsWith("o");
 	}
 
 }

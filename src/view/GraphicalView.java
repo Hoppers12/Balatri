@@ -20,6 +20,7 @@ import domain.Planet;
 import domain.SelectionResult;
 import model.GameState;
 import model.Hand;
+import model.HighScore;
 
 public final class GraphicalView implements View {
 
@@ -30,6 +31,9 @@ public final class GraphicalView implements View {
 	private static final int CARDS_BOTTOM_MARGIN = 80;
 	private static final int BTN_WIDTH = 140;
   private static final int BTN_HEIGHT = 45;
+
+  private HighScore currentHighScore;
+  private boolean newRecord;
   
 	private final ApplicationContext context;
 	private GameState currentState;
@@ -92,18 +96,17 @@ public final class GraphicalView implements View {
   }
 
 	private void drawStateInfo(Graphics2D c) {
-		if (currentState == null) {
-			return;
-		}
-		// Style du texte
-		c.setColor(Palette.TEXT);
-		c.setFont(Typography.INFO);
+    if (currentState == null) {
+        return;
+    }
+    c.setColor(Palette.TEXT);
+    c.setFont(Typography.INFO);
 
-		// Affichage des infos
-		c.drawString("Blind : " + currentState.getCurrentBlind(), 50, 160);
-      c.drawString("Score : " + currentState.getCurrentBlindScore() + " / " + currentState.getCurrentBlind().targetScore(), 50, 200);
-      c.drawString("Mains restantes : " + currentState.getHandsRemaining()
-          + " / " + GameState.HANDS_PER_BLIND, 50, 240);
+    c.drawString("Blind n°" + currentState.getBlindNumber(), 50, 160);
+    c.drawString("Score : " + currentState.getCurrentBlindScore() + " / " + currentState.getCurrentBlind().targetScore(), 50, 200);
+    c.drawString("Mains restantes : " + currentState.getHandsRemaining() + " / " + GameState.HANDS_PER_BLIND, 50, 240);
+    c.drawString("Score total : " + currentState.getTotalScore(), 50, 280);
+    c.drawString("Blinds battus : " + currentState.getBlindsBeaten(), 50, 320);
 	}
 
 	private void drawActiveBonuses(Graphics2D c) {
@@ -316,7 +319,7 @@ public final class GraphicalView implements View {
 		c.drawString(hint, boxX + (boxW - hintWidth) / 2, boxY + 240);
 	}
 
-	// Fin de partie (victoire ou défaite)
+	// Plus de fin donc bilan
 	private void drawEndOverlay(Graphics2D c) {
 		if (!gameEnded || currentState == null) {
 			return;
@@ -327,34 +330,45 @@ public final class GraphicalView implements View {
 		c.fillRect(0, 0, screen.width(), screen.height());
 
 		var boxW = 600;
-		var boxH = 220;
+		var boxH = 320;
 		var boxX = (screen.width() - boxW) / 2;
 		var boxY = (screen.height() - boxH) / 2;
 		c.setColor(Palette.CARD);
 		c.fillRoundRect(boxX, boxY, boxW, boxH, 20, 20);
 
-		c.setFont(Typography.TITLE);
-		String title;
-		if (currentState.isGameWon()) {
-			c.setColor(Palette.RED_SUIT);
-			title = "VICTOIRE !";
-		} else {
-			c.setColor(Palette.BLACK_SUIT);
-			title = "DEFAITE";
-		}
-		var titleWidth = c.getFontMetrics().stringWidth(title);
-		c.drawString(title, boxX + (boxW - titleWidth) / 2, boxY + 90);
-
 		c.setColor(Palette.BLACK_SUIT);
-		c.setFont(Typography.INFO);
-		var recap = "Score final : " + currentState.getCurrentBlindScore();
-		var recapWidth = c.getFontMetrics().stringWidth(recap);
-		c.drawString(recap, boxX + (boxW - recapWidth) / 2, boxY + 150);
+    c.setFont(Typography.TITLE);
+    var title = "PARTIE TERMINEE";
+    var titleWidth = c.getFontMetrics().stringWidth(title);
+    c.drawString(title, boxX + (boxW - titleWidth) / 2, boxY + 70);
 
-		c.setFont(Typography.BODY);
-		var hint = "Q pour quitter";
-		var hintWidth = c.getFontMetrics().stringWidth(hint);
-		c.drawString(hint, boxX + (boxW - hintWidth) / 2, boxY + 195);
+    c.setFont(Typography.INFO);
+    var total = "Score total : " + currentState.getTotalScore();
+    var totalWidth = c.getFontMetrics().stringWidth(total);
+    c.drawString(total, boxX + (boxW - totalWidth) / 2, boxY + 130);
+
+    var blinds = "Blinds battus : " + currentState.getBlindsBeaten();
+    var blindsWidth = c.getFontMetrics().stringWidth(blinds);
+    c.drawString(blinds, boxX + (boxW - blindsWidth) / 2, boxY + 170);
+
+    if (currentHighScore != null) {
+        var best = "Meilleur : " + currentHighScore.getBestScore()
+                + " pts (" + currentHighScore.getBestBlinds() + " blinds)";
+        var bestWidth = c.getFontMetrics().stringWidth(best);
+        c.drawString(best, boxX + (boxW - bestWidth) / 2, boxY + 210);
+    }
+    if (newRecord) {
+        c.setColor(Palette.RED_SUIT);
+        var rec = "Nouveau record !";
+        var recWidth = c.getFontMetrics().stringWidth(rec);
+        c.drawString(rec, boxX + (boxW - recWidth) / 2, boxY + 245);
+        c.setColor(Palette.BLACK_SUIT);
+    }
+
+    c.setFont(Typography.BODY);
+    var hint = "ESPACE pour rejouer - Q pour quitter";
+    var hintWidth = c.getFontMetrics().stringWidth(hint);
+    c.drawString(hint, boxX + (boxW - hintWidth) / 2, boxY + 295);
 	}
 
 	// Ferme le jeu avec la touche Q
@@ -516,18 +530,33 @@ public final class GraphicalView implements View {
 	}
 
 	@Override
-	public void showEnd(GameState state) {
-		Objects.requireNonNull(state);
-		this.currentState = state;
-		this.gameEnded = true;
-		redraw();
-		// On reste dans une boucle d'events pour que Q continue à fonctionner.
-		while (true) {
-			var event = context.pollOrWaitEvent(Long.MAX_VALUE);
-			if (event != null) {
-				checkQuit(event);
-			}
-		}
+	public void showEnd(GameState state, HighScore highScore, boolean newRecord) {
+	    Objects.requireNonNull(state);
+	    this.currentState = state;
+	    this.currentHighScore = highScore;
+	    this.newRecord = newRecord;
+	    this.gameEnded = true;
+	    redraw();
+	    // On n'attend pas car askReplay() gère rejouer / quitter.
+	}
+	
+	@Override
+	public boolean askReplay() {
+	    while (true) {
+	        var event = context.pollOrWaitEvent(Long.MAX_VALUE);
+	        if (event == null) {
+	            continue;
+	        }
+	        checkQuit(event); // Q ferme le jeu
+	        var replay = switch (event) {
+	            case PointerEvent pe -> false;
+	            case KeyboardEvent ke -> ke.action() == KeyboardEvent.Action.KEY_PRESSED
+	                    && ke.key() == KeyboardEvent.Key.SPACE;
+	        };
+	        if (replay) {
+	            return true;
+	        }
+	    }
 	}
 
 }
