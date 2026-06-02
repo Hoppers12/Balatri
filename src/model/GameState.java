@@ -1,94 +1,88 @@
 package model;
 
-import java.util.List;
-import java.util.Objects;
-
 public class GameState {
 	// Règle de jeu : nombre de mains accordées au joueur pour battre chaque blind
 	public static final int HANDS_PER_BLIND = 4;
 	private static final int DISCARDS_PER_BLIND = 3;
+	private static final int BASE_TARGET = 100; // cible du 1er blind
+	private static final double GROWTH = 1.3; // augmenter les blinds à partir de ça
 
 	private final Deck deck;
 	private final HandLevels handLevels;
-	private final List<Blind> blinds;
 
-	private int currentBlindIndex;
+	private int blindNumber;
+	private Blind currentBlind;
 	private long currentBlindScore;
+	private long totalScore;
+	private int blindsBeaten;
 	private int handsRemaining;
-	private boolean gameWon;
-	private boolean gameOver;
 	private int discardsRemaining;
+	private boolean gameOver;
 
 	// Init une nouvelle partie
-	public GameState(List<Blind> blinds) {
-		Objects.requireNonNull(blinds);
-		if (blinds.isEmpty()) {
-			throw new IllegalArgumentException("La liste des blinds ne doit pas être vide.");
-		}
+	public GameState() {
 		this.deck = new Deck();
 		this.handLevels = new HandLevels();
-		this.blinds = blinds;
-		this.currentBlindIndex = 0;
-		this.gameWon = false;
+		this.blindNumber = 0;
+		this.totalScore = 0;
+		this.blindsBeaten = 0;
 		this.gameOver = false;
 		setupNewBlind();
-		
 	}
 
 	// Prépare les variables pour le blind courant.
 	private void setupNewBlind() {
+		currentBlind = generateBlind(blindNumber);
 		currentBlindScore = 0;
 		handsRemaining = HANDS_PER_BLIND;
 		discardsRemaining = DISCARDS_PER_BLIND;
 		deck.reset();
 	}
-	public void substractDiscardsRemaining() {
-    this.discardsRemaining = this.discardsRemaining-1;
-  }
+
+	private static Blind generateBlind(int index) {
+		int target = (int) Math.round(BASE_TARGET * Math.pow(GROWTH, index));
+		return new Blind("Blind " + (index + 1), target);
+	}
 
 	public void addScore(long points) {
 		currentBlindScore += points;
+		totalScore += points;
 		checkWinCondition();
-	}
-	
-	public void useDiscard() {
-    if (discardsRemaining > 0) {
-        discardsRemaining--;
-    }
-	}
-
-	public int getDiscardsRemaining() {
-    return discardsRemaining;
 	}
 
 	private void checkWinCondition() {
-		var current = getCurrentBlind();
-		if (currentBlindScore >= current.targetScore()) {
-			nextBlind();
+		if (currentBlindScore >= currentBlind.targetScore()) {
+			blindsBeaten++;
+			nextBlind(); // mode infini : on enchaîne toujours
 		} else if (handsRemaining <= 0) {
 			gameOver = true;
 		}
 	}
 
-	private void nextBlind() {
-		if (currentBlindIndex < blinds.size() - 1) {
-			currentBlindIndex++;
-			setupNewBlind();
-		} else {
-			gameWon = true;
-			gameOver = true;
-		}
+	private void nextBlind() { // pas de victoire : ça continue
+		blindNumber++;
+		setupNewBlind();
 	}
 
 	public void decrementHands() {
 		handsRemaining--;
-		if (handsRemaining <= 0 && currentBlindScore < getCurrentBlind().targetScore()) {
+		if (handsRemaining <= 0 && currentBlindScore < currentBlind.targetScore()) {
 			gameOver = true;
 		}
 	}
 
+	public void useDiscard() {
+		if (discardsRemaining > 0) {
+			discardsRemaining--;
+		}
+	}
+
 	public Blind getCurrentBlind() {
-		return blinds.get(currentBlindIndex);
+		return currentBlind;
+	}
+
+	public int getBlindNumber() {
+		return blindNumber + 1;
 	}
 
 	public Deck getDeck() {
@@ -103,12 +97,20 @@ public class GameState {
 		return currentBlindScore;
 	}
 
+	public long getTotalScore() {
+		return totalScore;
+	}
+
+	public int getBlindsBeaten() {
+		return blindsBeaten;
+	}
+
 	public int getHandsRemaining() {
 		return handsRemaining;
 	}
 
-	public boolean isGameWon() {
-		return gameWon;
+	public int getDiscardsRemaining() {
+		return discardsRemaining;
 	}
 
 	public boolean isGameOver() {
@@ -118,27 +120,15 @@ public class GameState {
 	@Override
 	public String toString() {
 		var sb = new StringBuilder();
-		sb.append("Etat actuel du jeu : \n");
-
-		sb.append("Blind actuelle     : ").append(currentBlindIndex + 1).append(" / ").append(blinds.size()).append("\n");
-		sb.append("Score accumulé     : ").append(currentBlindScore).append(" pts\n");
-		sb.append("Mains disponibles  : ").append(handsRemaining).append("\n");
+		sb.append("Etat actuel du jeu :\n");
+		sb.append("Blind courant     : ").append(getBlindNumber()).append(" (cible ").append(currentBlind.targetScore())
+				.append(")\n");
+		sb.append("Score du blind    : ").append(currentBlindScore).append(" pts\n");
+		sb.append("Score total       : ").append(totalScore).append(" pts\n");
+		sb.append("Blinds battus     : ").append(blindsBeaten).append("\n");
+		sb.append("Mains disponibles : ").append(handsRemaining).append("\n");
 		sb.append("Défausses dispo   : ").append(discardsRemaining).append("\n");
-		sb.append("Statut victoire    : ").append(getVictoireStatut()).append("\n");
-		sb.append("Statut partie      : ").append(gameOver ? "Terminée" : "En cours").append("\n");
-		sb.append("Blinds à affronter : ").append(blinds).append("\n");
-
+		sb.append("Statut partie     : ").append(gameOver ? "Terminée" : "En cours").append("\n");
 		return sb.toString();
 	}
-
-	private String getVictoireStatut() {
-		if (gameWon) {
-			return "Gagné";
-		} else if (gameOver) {
-			return "Perdu";
-		} else {
-			return "En cours";
-		}
-	}
-
 }

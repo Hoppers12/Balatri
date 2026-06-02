@@ -8,6 +8,7 @@ import domain.HandType;
 import domain.Planet;
 import domain.SelectionResult;
 import model.GameState;
+import model.HighScore;
 
 public sealed interface View permits ConsoleView, GraphicalView {
 
@@ -34,5 +35,6 @@ public sealed interface View permits ConsoleView, GraphicalView {
 	void showPlanetWon(Planet planet);
 
 	// Annonce la fin de partie (gagnée ou perdue).
-	void showEnd(GameState state);
+	void showEnd(GameState state, HighScore highScore, boolean record);
+	boolean askReplay();
 }
