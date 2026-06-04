@@ -69,7 +69,8 @@ public final class GameController {
   		}else {
   		// Détecte la combinaison et calcule le score
   	    var type = HandDetector.detect(selected);
-  	    var score = ScoreController.getScore(type, state.getHandLevels());
+  	    var score = ScoreController.getScore(type, state.getHandLevels(),selected);
+
   	    view.showPlay(type, score);
   
   	    // Gestion du score (peut déclencher nextBlind)

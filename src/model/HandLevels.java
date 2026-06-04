@@ -1,8 +1,10 @@
 package model;
 
+import domain.Card;
 import domain.HandType;
 import domain.Planet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,14 +40,25 @@ public class HandLevels {
 	}
 
 	public int getChipsFor(HandType type) {
+	  Objects.requireNonNull(type);
 		return scores.get(type).chips();
 	}
 
 	public int getMultiplierFor(HandType type) {
+	  Objects.requireNonNull(type);
 		return scores.get(type).multiplier();
 	}
 
 	public int getLevelFor(HandType type) {
+	  Objects.requireNonNull(type);
 		return scores.get(type).level();
+	}
+	
+	//Donne la valeur des 5 cartes de la combinaison (extension Score par cartes)
+	public int getChipsForCards(List<Card> selected) {
+	   Objects.requireNonNull(selected);
+	   var valChipsCards = selected.stream().mapToInt(val->val.rank().value()).sum();
+	   
+	   return valChipsCards;
 	}
 }
