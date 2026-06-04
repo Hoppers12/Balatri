@@ -5,7 +5,7 @@ public class GameState {
 	public static final int HANDS_PER_BLIND = 4;
 	private static final int DISCARDS_PER_BLIND = 3;
 	private static final int BASE_TARGET = 100; // cible du 1er blind
-	private static final double GROWTH = 1.3; // augmenter les blinds à partir de ça
+	private static final double GROWTH = 1.4; // augmenter les blinds à partir de ça
 
 	private final Deck deck;
 	private final HandLevels handLevels;
