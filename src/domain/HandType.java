@@ -20,15 +20,29 @@ public enum HandType {
 		this.baseMult = baseMult;
 	}
 
+	/**
+	 * Returns the base number of chips for this combination, before any upgrade.
+	 *
+	 * @return the base chips of the combination
+	 */
 	public int baseChips() {
 		return baseChips;
 	}
 
+	/**
+	 * Returns the base multiplier of this combination, before any upgrade.
+	 *
+	 * @return the base multiplier of the combination
+	 */
 	public int baseMult() {
 		return baseMult;
 	}
 
-	// Nom lisible affiché à l'utilisateur (sans underscores ni majuscules SCREAMING)
+	/**
+	 * Returns the human-readable French name of the combination.
+	 *
+	 * @return the display name of the combination
+	 */
 	public String displayName() {
 		return switch (this) {
 			case HIGH_CARD -> "Carte Haute";

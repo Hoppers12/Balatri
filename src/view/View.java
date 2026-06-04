@@ -12,29 +12,68 @@ import model.HighScore;
 
 public sealed interface View permits ConsoleView, GraphicalView {
 
-	//Tri une main par hauteur croissante.
+	/**
+	 * Returns a copy of the given cards sorted by ascending rank value.
+	 *
+	 * @param cards the cards to sort
+	 * @return a new list sorted by rank
+	 */
 	static List<Card> sortByRank(List<Card> cards) {
 		return cards.stream()
 								.sorted(Comparator.comparingInt(c -> c.rank().value()))
 								.toList();
 	}
-	
-	// Affiche l'état courant (blind, score cumulé, mains restantes, niveaux).
+
+	/**
+	 * Displays the current game state (blind, score, remaining hands, levels).
+	 *
+	 * @param state the state to display
+	 */
 	void showState(GameState state);
 
-	// Affiche les 8 cartes piochées.
+	/**
+	 * Displays the cards drawn this turn.
+	 *
+	 * @param handCards the drawn cards
+	 */
 	void showHand(List<Card> handCards);
 
-	// Demande au joueur de sélectionner 5 cartes parmi les 8 passées.
+	/**
+	 * Asks the player to select cards, returning the selection and whether it is a discard.
+	 *
+	 * @param handCards the cards available for selection
+	 * @return the player's selection and intent (play or discard)
+	 */
 	SelectionResult askSelection(List<Card> handCards);
 
-	// Affiche le résultat d'une main jouée (combinaison + score gagné).
+	/**
+	 * Displays the result of a played hand.
+	 *
+	 * @param type  the combination formed
+	 * @param score the score gained
+	 */
 	void showPlay(HandType type, int score);
 
-	// Planète obtenue après un blind battu.
+	/**
+	 * Announces the planet obtained after beating a blind.
+	 *
+	 * @param planet the planet won
+	 */
 	void showPlanetWon(Planet planet);
 
-	// Annonce la fin de partie (gagnée ou perdue).
+	/**
+	 * Shows the end-of-game screen with the final result and the session high score.
+	 *
+	 * @param state     the final game state
+	 * @param highScore the session high score
+	 * @param record    {@code true} if this game set a new record
+	 */
 	void showEnd(GameState state, HighScore highScore, boolean record);
+
+	/**
+	 * Asks the player whether they want to play another game.
+	 *
+	 * @return {@code true} to play again
+	 */
 	boolean askReplay();
 }

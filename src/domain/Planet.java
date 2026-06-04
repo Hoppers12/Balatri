@@ -21,19 +21,38 @@ public enum Planet {
 		this.bonusMult = bonusMult;
 	}
 
+	/**
+	 * Returns the combination this planet upgrades.
+	 *
+	 * @return the targeted hand type
+	 */
 	public HandType target() {
 		return target;
 	}
 
+	/**
+	 * Returns the bonus chips this planet adds to its targeted combination on each use.
+	 *
+	 * @return the chips bonus
+	 */
 	public int bonusChips() {
 		return bonusChips;
 	}
 
+	/**
+	 * Returns the bonus multiplier this planet adds to its targeted combination on each use.
+	 *
+	 * @return the multiplier bonus
+	 */
 	public int bonusMult() {
 		return bonusMult;
 	}
 
-	// Nom lisible affiché à l'utilisateur (en français)
+	/**
+	 * Returns the human-readable French name of the planet (ex: {@code "Vénus"}).
+	 *
+	 * @return the display name of the planet
+	 */
 	public String displayName() {
 		return switch (this) {
 			case PLUTO -> "Pluton";
@@ -48,7 +67,13 @@ public enum Planet {
 		};
 	}
 
-	// Renvoie la planète qui cible la combinaison donnée (relation 1-1).
+	/**
+	 * Returns the planet associated with the given combination (one-to-one mapping).
+	 *
+	 * @param type the hand type to look up
+	 * @return the planet that upgrades {@code type}
+	 * @throws IllegalArgumentException if no planet targets {@code type}
+	 */
 	public static Planet forHandType(HandType type) {
 		for (var planet : values()) {
 			if (planet.target() == type) {

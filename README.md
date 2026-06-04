@@ -83,7 +83,6 @@ src/
 |      |-- Blind.java
 |      |-- Deck.java
 |      |-- GameState.java
-|      |-- Hand.java
 |      |-- HandLevels.java
 		 -- HighScore.java           (meilleur score de la session)
 |-- controller/                     (logique de jeu)

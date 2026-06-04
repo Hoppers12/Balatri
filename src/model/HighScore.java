@@ -1,21 +1,43 @@
 package model;
 
 public final class HighScore {
-    private long bestScore;
-    private int bestBlinds;
+	private long bestScore;
+	private int bestBlinds;
 
-    // Enregistre un résultat + true si c'est un nouveau record de score.
-    public boolean submit(long score, int blindsBeaten) {
-        boolean newRecord = score > bestScore;
-        if (score > bestScore) {
-            bestScore = score;
-        }
-        if (blindsBeaten > bestBlinds) {
-            bestBlinds = blindsBeaten;
-        }
-        return newRecord;
-    }
+	/**
+	 * Records a finished game's result and keeps the best score and best blind count
+	 * of the session.
+	 *
+	 * @param score        the total score of the finished game
+	 * @param blindsBeaten the number of blinds beaten in the finished game
+	 * @return {@code true} if {@code score} is a new best score
+	 */
+	public boolean submit(long score, int blindsBeaten) {
+		boolean newRecord = score > bestScore;
+		if (score > bestScore) {
+			bestScore = score;
+		}
+		if (blindsBeaten > bestBlinds) {
+			bestBlinds = blindsBeaten;
+		}
+		return newRecord;
+	}
 
-    public long getBestScore()  { return bestScore; }
-    public int  getBestBlinds() { return bestBlinds; }
+	/**
+	 * Returns the best total score recorded this session.
+	 *
+	 * @return the best score
+	 */
+	public long getBestScore() {
+		return bestScore;
+	}
+
+	/**
+	 * Returns the highest number of blinds beaten this session.
+	 *
+	 * @return the best blind count
+	 */
+	public int getBestBlinds() {
+		return bestBlinds;
+	}
 }

@@ -14,7 +14,9 @@ public final class Deck {
 	private final List<Card> drawPile = new ArrayList<>(); // pioche
 	private final List<Card> discardPile = new ArrayList<>(); // défausse
 
-	// Les 52 cartes (13 rangs x 4 couleurs)
+	/**
+	 * Builds a full 52-card deck (13 ranks × 4 suits) and shuffles it.
+	 */
 	public Deck() {
 		for (var color : Color.values()) {
 			for (var rank : Rank.values()) {
@@ -24,6 +26,15 @@ public final class Deck {
 		Collections.shuffle(drawPile);
 	}
 
+	/**
+	 * Draws {@code n} cards from the draw pile. If the pile holds fewer than {@code n}
+	 * cards, the discard pile is shuffled back into it beforehand.
+	 *
+	 * @param n the number of cards to draw
+	 * @return the list of drawn cards
+	 * @throws IllegalArgumentException if {@code n} is not strictly positive
+	 * @throws IllegalStateException    if not enough cards are available even after recycling
+	 */
 	public List<Card> draw(int n) {
 		if (n <= 0) {
 			throw new IllegalArgumentException("Le nombre de cartes à piocher doit être positif.");
@@ -47,29 +58,41 @@ public final class Deck {
 		return drawn;
 	}
 
+	/**
+	 * Adds the given cards to the discard pile.
+	 *
+	 * @param cards the cards to discard
+	 * @throws NullPointerException if {@code cards} is null
+	 */
 	public void discard(List<Card> cards) {
 		Objects.requireNonNull(cards);
 
-		cards.forEach(carte->discardPile.add(carte));
+		discardPile.addAll(cards);
 	}
 
+	/**
+	 * Returns the number of cards remaining in the draw pile.
+	 *
+	 * @return the size of the draw pile
+	 */
 	public int restDrawPile() {
 		return drawPile.size();
 	}
 
-	// Mélange la défausse et met dans la pioche
+	/**
+	 * Shuffles the discard pile back into the draw pile and empties the discard pile.
+	 */
 	private void recycleDiscard() {
 		Collections.shuffle(discardPile);
 		// Mettre les cartes de la défausse dans la pioche
-		for (var card : discardPile) {
-			drawPile.add(card);
-		}
+		drawPile.addAll(discardPile);
 		// Vider la défausse
-		while (!discardPile.isEmpty()) {
-			discardPile.removeLast();
-		}
+		discardPile.clear();
 	}
 
+	/**
+	 * Resets the deck to a freshly shuffled full 52-card draw pile and clears the discard pile.
+	 */
 	public void reset() {
 		drawPile.clear();
 		discardPile.clear();

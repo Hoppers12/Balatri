@@ -23,10 +23,21 @@ public enum Rank {
 		this.symbol = symbol;
 	}
 
+	/**
+	 * Returns the numeric value of the rank, used for scoring and straight detection
+	 * (2..10 for number cards, 11 = Jack, 12 = Queen, 13 = King, 14 = Ace).
+	 *
+	 * @return the rank value
+	 */
 	public int value() {
 		return value;
 	}
-	
+
+	/**
+	 * Returns the symbol displayed for this rank (ex: {@code "10"}, {@code "K"}, {@code "A"}).
+	 *
+	 * @return the display symbol of the rank
+	 */
 	public String symbol() {
 		return symbol;
 	}

@@ -2,6 +2,7 @@ package domain;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -13,8 +14,17 @@ public final class HandDetector {
 	private HandDetector() {
 	}
 
+	/**
+	 * Detects the best poker combination formed by exactly five cards.
+	 * Handles the special low straight A-2-3-4-5.
+	 *
+	 * @param cards the five cards to evaluate
+	 * @return the detected combination
+	 * @throws IllegalArgumentException if {@code cards} is null or does not contain exactly five cards
+	 */
 	public static HandType detect(List<Card> cards) {
-		if (cards == null || cards.size() != HAND_SIZE) {
+		Objects.requireNonNull(cards);
+		if (cards.size() != HAND_SIZE) {
 			throw new IllegalArgumentException("Une main doit contenir exactement " + HAND_SIZE + " cartes.");
 		}
 
@@ -28,14 +38,9 @@ public final class HandDetector {
 		// Détecter les combinaisons à partir du rang (paire, double paire, brelan, full, carré)
 		var counts = countRanks(cards);
 		// Nombre max de cartes de mêmes rang
-		var maxSameRank = counts.values().stream()
-														.mapToLong(Long::longValue)
-														.max()
-														.orElse(0);
+		var maxSameRank = counts.values().stream().mapToLong(Long::longValue).max().orElse(0);
 		// Nombre de paire
-		var pairCount = counts.values().stream()
-													.filter(c -> c == 2)
-													.count();
+		var pairCount = counts.values().stream().filter(c -> c == 2).count();
 
 		if (maxSameRank == 4) {
 			return HandType.FOUR_OF_A_KIND;
@@ -61,16 +66,26 @@ public final class HandDetector {
 		return HandType.HIGH_CARD;
 	}
 
-	// == fonctionne car Color est un enum
+	/**
+	 * Indicates whether all five cards share the same suit.
+	 *
+	 * @param cards the cards to test
+	 * @return {@code true} if the cards form a flush
+	 */
 	private static boolean isFlush(List<Card> cards) {
 		var first = cards.get(0).color();
-		// Toutes la même couleur ?
 		return cards.stream()
 								.allMatch(c -> c.color() == first);
 	}
 
+	/**
+	 * Indicates whether the five cards form a straight (consecutive values),
+	 * including the special A-2-3-4-5 case.
+	 *
+	 * @param cards the cards to test
+	 * @return {@code true} if the cards form a straight
+	 */
 	private static boolean isStraight(List<Card> cards) {
-		// Recupere les vals triées
 		var values = cards.stream()
 											.mapToInt(c -> c.rank().value())
 											.sorted()
@@ -90,6 +105,12 @@ public final class HandDetector {
 		return true;
 	}
 
+	/**
+	 * Counts how many cards share each rank.
+	 *
+	 * @param cards the cards to count
+	 * @return a map from each rank to the number of cards of that rank
+	 */
 	private static Map<Rank, Long> countRanks(List<Card> cards) {
 		return cards.stream()
         				.collect(Collectors.groupingBy(Card::rank, Collectors.counting()));

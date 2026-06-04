@@ -16,7 +16,7 @@ class Main {
 
 		if (choice.startsWith("c")) {
 			// Vue console
-			boolean again = true;
+			var again = true;
 			while (again) {
 				var view = new ConsoleView();
 				var state = new GameState();
@@ -26,7 +26,7 @@ class Main {
 		} else {
 			// Vue graphique
 			Application.run(Palette.BACKGROUND, context -> {
-				boolean again = true;
+				var again = true;
 				while (again) {
 					var view = new GraphicalView(context);
 					var state = new GameState();
