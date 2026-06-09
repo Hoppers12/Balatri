@@ -54,6 +54,7 @@ public final class GraphicalView implements View {
 	 * @throws NullPointerException if {@code context} is null
 	 */
 	public GraphicalView(ApplicationContext context) {
+	   Objects.requireNonNull(context);
 		// On affecte la val du paramètre (context) au champ (contexte aussi).
 		this.context = Objects.requireNonNull(context);
 	}
@@ -64,6 +65,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawHeader(Graphics2D c) {
+	  Objects.requireNonNull(c);
 		var screen = context.getScreenInfo();
 		c.setColor(Palette.TEXT);
 		c.setFont(Typography.TITLE);
@@ -84,6 +86,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawDiscardButton(Graphics2D c) {
+	  Objects.requireNonNull(c);
 		if (currentHand.isEmpty()) {
 			return; // Pas de cartes = pas de bouton
 		}
@@ -116,6 +119,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawStateInfo(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		if (currentState == null) {
 			return;
 		}
@@ -135,6 +139,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawActiveBonuses(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		if (currentState == null) {
 			return;
 		}
@@ -175,6 +180,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawQuitHint(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		var screen = context.getScreenInfo();
 		c.setColor(Palette.TEXT);
 		c.setFont(Typography.BODY);
@@ -189,6 +195,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawHand(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		if (currentHand.isEmpty()) {
 			return;
 		}
@@ -215,6 +222,8 @@ public final class GraphicalView implements View {
 	 * @param selected {@code true} to draw the card as selected
 	 */
 	private static void drawCard(Graphics2D c, Card card, int x, int y, boolean selected) {
+	   Objects.requireNonNull(c);
+	    Objects.requireNonNull(card);
 		if (selected) {
 			c.setColor(Palette.CARD_SELECTED);
 		} else {
@@ -285,6 +294,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawSelectionPrompt(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		if (currentHand.isEmpty()) {
 			return;
 		}
@@ -304,6 +314,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawPlayOverlay(Graphics2D c) {
+	   Objects.requireNonNull(c);
 		if (currentPlayType == null) {
 			return;
 		}
@@ -342,6 +353,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawPlanetOverlay(Graphics2D c) {
+	  Objects.requireNonNull(c);
 		if (currentPlanet == null) {
 			return;
 		}
@@ -386,6 +398,7 @@ public final class GraphicalView implements View {
 	 * @param c the graphics context to draw on
 	 */
 	private void drawEndOverlay(Graphics2D c) {
+	  Objects.requireNonNull(c);
 		if (!gameEnded || currentState == null) {
 			return;
 		}
@@ -442,6 +455,7 @@ public final class GraphicalView implements View {
 	 * @param event the event to inspect
 	 */
 	private void checkQuit(Event event) {
+	  Objects.requireNonNull(event);
 		var shouldQuit = switch (event) {
 		case PointerEvent pe -> false;
 		case KeyboardEvent ke -> ke.action() == KeyboardEvent.Action.KEY_PRESSED && ke.key() == KeyboardEvent.Key.Q;
